@@ -1,9 +1,9 @@
 public with sharing class TransporterSelector {
-    public static Transporteur__c getTransporterById(Id transporterId) {
+    public static List<Transporteur__c> getTransporteurByTypeClient(String typeClient) {
         return [
                 SELECT Id, Name, Type_Client__c
                 FROM Transporteur__c
-                WHERE Id = :transporterId
+                WHERE Type_Client__c = :typeClient
         ];
     }
 }
