@@ -3,7 +3,7 @@
  */
 
 @IsTest
-private class TarifSelectortest {
+private class TarifSelectorTest {
     @TestSetup
     static void setupTestData() {
         // Créer une zone de livraison

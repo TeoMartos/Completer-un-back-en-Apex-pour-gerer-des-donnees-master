@@ -5,7 +5,6 @@ public with sharing class OrderService {
 
         Integer minProduitsPro = 5;
         Integer minProduitsParticulier = 3;
-
         Integer minProduits;
 
         if (acc.Acc_TypeClient__c == 'Professionnel') {
