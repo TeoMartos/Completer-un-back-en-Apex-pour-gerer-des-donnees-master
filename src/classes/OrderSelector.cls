@@ -3,11 +3,17 @@
  */
 
 public with sharing class OrderSelector {
+    @AuraEnabled(Cacheable=true)
     public static Order getOrderById(Id orderId) {
-        return [
-                SELECT Id, Name, Pays_Liv_Acc__c, Nombre_de_Produits__c,  Transporteur_Choisi__c, Transporteur_Choisi__r.Name
+        List<Order> results = [
+                SELECT Id, AccountId, Name, Pays_Liv_Acc__c, Nombre_Produits__c
                 FROM Order
                 WHERE Id = :orderId
+                LIMIT 1
         ];
+        if (results.isEmpty()) {
+            throw new AuraHandledException('Commande introuvable pour l\'ID fourni.');
+        }
+        return results[0];
     }
 }

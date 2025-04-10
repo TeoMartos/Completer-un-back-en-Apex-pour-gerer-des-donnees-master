@@ -1,0 +1,16 @@
+/**
+ * Created by TMARTOS on 07/04/2025.
+ */
+
+.custom-border {
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}
+
+.slds-p-around_medium {
+    padding: 1rem;
+}
+
+.slds-text-align_center {
+    text-align: center;
+}

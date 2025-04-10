@@ -1,5 +1,5 @@
 public with sharing class OrderService {
-
+    @AuraEnabled(Cacheable=true)
     public static void validateOrder(Order orderToValidate) {
         Account acc = AccountSelector.getAccountById(orderToValidate.AccountId);
 
@@ -13,7 +13,7 @@ public with sharing class OrderService {
             minProduits = minProduitsParticulier;
         }
 
-        if (orderToValidate.Nombre_de_Produits__c < minProduits) {
+        if (orderToValidate.Nombre_Produits__c < minProduits) {
             orderToValidate.addError(
                     'Le client de type ' + acc.Acc_TypeClient__c + ' doit commander au moins ' + minProduits + ' produits.'
             );

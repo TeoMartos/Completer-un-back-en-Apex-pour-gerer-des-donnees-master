@@ -65,7 +65,7 @@ public class OrderServiceTest {
         insert items;
         update ord;
         // 6. Reload + appel méthode métier
-        ord = [SELECT Id, AccountId, Transporteur_Choisi__c, Nombre_de_Produits__c FROM Order WHERE Id = :ord.Id];
+        ord = [SELECT Id, AccountId, Nombre_Produits__c FROM Order WHERE Id = :ord.Id];
         OrderService.validateOrder(ord);
     }
 

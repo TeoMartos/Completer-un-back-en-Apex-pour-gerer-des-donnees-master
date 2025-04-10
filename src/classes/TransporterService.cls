@@ -20,8 +20,7 @@ public with sharing class TransporterService {
         Livraison__c livraison = new Livraison__c(
                 Commande__c = orderToValidate.Id,
                 Tarif__c = meilleurTarif.Id,
-                Statut__c = 'En cours',
-                Date_Expedition__c = Date.today()
+                Statut__c = 'En cours'
         );
         insert livraison;
     }

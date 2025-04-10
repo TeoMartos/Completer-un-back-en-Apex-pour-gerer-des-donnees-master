@@ -52,7 +52,7 @@ private class TransporterServiceTest {
 
         // 7. Vérifier qu’une livraison a été créée et liée à la commande
         List<Livraison__c> livraisons = [
-                SELECT Id, Commande__c, Tarif__c, Statut__c, Date_Expedition__c
+                SELECT Id, Commande__c, Tarif__c, Statut__c
                 FROM Livraison__c
                 WHERE Commande__c = :ord.Id
         ];

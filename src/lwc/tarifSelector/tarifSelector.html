@@ -1,0 +1,32 @@
+<!--
+ - Created by TMARTOS on 07/04/2025.
+ -->
+
+<!-- Tarif Selector -->
+<template>
+    <lightning-card title="Sélection des Tarifs" icon-name="standard:shipping">
+        <div class="slds-p-around_medium">
+            <lightning-button
+                    variant="brand"
+                    label="Proposer un nouveau tarif"
+                    onclick={handleClick}
+                    class="slds-m-bottom_medium">
+            </lightning-button>
+            <template if:true={showTarifs}>
+                <lightning-datatable
+                        key-field="id"
+                        data={tarifs}
+                        columns={columns}
+                        onrowaction={handleRowAction}
+                        hide-checkbox-column>
+                </lightning-datatable>
+            </template>
+
+            <template if:false={hasTarif}>
+                <div class="slds-text-align_center slds-p-around_medium">
+                    Aucun tarif disponible pour cette zone de livraison.
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
