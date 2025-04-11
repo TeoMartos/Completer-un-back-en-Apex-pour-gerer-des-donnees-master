@@ -11,6 +11,8 @@ import {
 import getLivraison from '@salesforce/apex/TarifController.getLivraisonById';
 import getAccount from '@salesforce/apex/AccountSelector.getAccountById';
 import getTarifs from '@salesforce/apex/TarifSelector.getTarifsByZoneName';
+import updateTarif from '@salesforce/apex/TarifController.updateTarifOnLivraison';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class TarifSelector extends LightningElement {
     @api recordId; // ID de la livraison
@@ -108,20 +110,43 @@ export default class TarifSelector extends LightningElement {
         }
     }
 
-    handleRowAction(event) {
-        const action = event.detail.action;
-        const row = event.detail.row;
+handleRowAction(event) {
+    const action = event.detail.action;
+    const row = event.detail.row;
 
-        if (action.name === 'select') {
-            this.selectedTarifId = row.id;
-            const selectEvent = new CustomEvent('tarifselected', {
-                detail: {
-                    tarifId: row.id
-                }
+    if (action.name === 'select') {
+        this.selectedTarifId = row.id;
+        console.log('[TarifSelector] 📨 Tarif sélectionné :', this.selectedTarifId);
+
+        updateTarif({ livraisonId: this.recordId, newTarifId: this.selectedTarifId })
+            .then(() => {
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Succès',
+                        message: 'Tarif mis à jour avec succès !',
+                        variant: 'success'
+                    })
+                );
+                // Optionnel : refresh de la page
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            })
+            .catch(error => {
+                console.error('[TarifSelector] ❌ Erreur updateTarif :', error);
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Erreur',
+                        message: 'Impossible de mettre à jour la livraison.',
+                        variant: 'error'
+                    })
+                );
             });
-            this.dispatchEvent(selectEvent);
-        }
+                    console.log('[TarifSelector] 📨 Tarif sélectionné :', this.selectedTarifId);
+
     }
+}
+
 
     handleClick() {
         this.showTarifs = true;

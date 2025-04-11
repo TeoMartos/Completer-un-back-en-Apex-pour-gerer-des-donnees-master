@@ -4,16 +4,17 @@
 
 public with sharing class TarifController {
     @AuraEnabled
-    public static void updateLivraisonTarif(Id orderId, Id newTarifId) {
+    public static void updateTarifOnLivraison(Id livraisonId, Id newTarifId) {
         Livraison__c liv = [
                 SELECT Id
                 FROM Livraison__c
-                WHERE Commande__c = :orderId
+                WHERE Id = :livraisonId
                 LIMIT 1
         ];
         liv.Tarif__c = newTarifId;
         update liv;
     }
+
     @AuraEnabled(Cacheable=true)
     public static Livraison__c getLivraisonByOrderId(Id orderId) {
         return [
