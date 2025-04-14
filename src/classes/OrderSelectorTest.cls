@@ -33,10 +33,11 @@ public class OrderSelectorTest {
     @IsTest
     static void testGetOrderById_Fail() {
         try {
-            OrderSelector.getOrderById('801000000000000AAA'); // ID fictif
+            OrderSelector.getOrderById('801000000000000AAA'); // ID bidon
             System.assert(false, 'Une exception aurait dû être levée');
         } catch (Exception e) {
-            System.assert(e.getMessage().contains('List has no rows'), 'Message attendu : aucune ligne trouvée');
+            System.assert(e instanceof QueryException, 'Une QueryException doit être levée');
         }
     }
+
 }

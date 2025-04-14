@@ -13,6 +13,9 @@ public with sharing class OrderService {
             minProduits = minProduitsParticulier;
         }
 
+        // 🔍 Ajout du log debug
+        OrderSelector.logOrderDetails(orderToValidate.Id);
+
         if (orderToValidate.Nombre_Produits__c < minProduits) {
             orderToValidate.addError(
                     'Le client de type ' + acc.Acc_TypeClient__c + ' doit commander au moins ' + minProduits + ' produits.'

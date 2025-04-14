@@ -3,6 +3,7 @@
  */
 
 public with sharing class OrderSelector {
+
     @AuraEnabled(Cacheable=true)
     public static Order getOrderById(Id orderId) {
         List<Order> results = [
@@ -15,5 +16,25 @@ public with sharing class OrderSelector {
             throw new AuraHandledException('Commande introuvable pour l\'ID fourni.');
         }
         return results[0];
+    }
+
+    public static void logOrderDetails(Id orderId) {
+        List<OrderItem> items = [
+                SELECT Quantity, Product2.Name
+                FROM OrderItem
+                WHERE OrderId = :orderId
+        ];
+
+        System.debug('OrderItems trouvés : ' + items.size());
+
+        Integer totalQuantite = 0;
+        for (OrderItem item : items) {
+            System.debug('🔹 Produit : ' + item.Product2.Name + ' | Quantité : ' + item.Quantity);
+            if (item.Quantity != null) {
+                totalQuantite += Integer.valueOf(item.Quantity);
+            }
+        }
+
+        System.debug('Quantité totale de produits commandés : ' + totalQuantite);
     }
 }

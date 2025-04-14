@@ -1,25 +1,36 @@
-trigger OrderTrigger on Order (before insert, before update) {
+trigger OrderTrigger on Order (before insert, before update, after update) {
 
-    // Création
     if (Trigger.isBefore && Trigger.isInsert) {
         for (Order ord : Trigger.new) {
-            OrderService.validateOrder(ord);
-
             if (ord.Order_StatutCommande__c == 'Confirmée') {
-                TransporterService.assignBestTransporter(ord);
+                OrderService.validateOrder(ord);
             }
         }
     }
 
-    // Mise à jour
     if (Trigger.isBefore && Trigger.isUpdate) {
         for (Order ord : Trigger.new) {
             Order oldOrd = Trigger.oldMap.get(ord.Id);
 
-            OrderService.validateOrder(ord);
+            Boolean passeEnConfirme =
+                    ord.Order_StatutCommande__c == 'Confirmée' &&
+                            oldOrd.Order_StatutCommande__c != 'Confirmée';
 
-            if (ord.Order_StatutCommande__c == 'Confirmée' &&
-                    oldOrd.Order_StatutCommande__c != 'Confirmée') {
+            if (passeEnConfirme) {
+                OrderService.validateOrder(ord);
+            }
+        }
+    }
+
+    if (Trigger.isAfter && Trigger.isUpdate) {
+        for (Order ord : Trigger.new) {
+            Order oldOrd = Trigger.oldMap.get(ord.Id);
+
+            Boolean passeEnConfirme =
+                    ord.Order_StatutCommande__c == 'Confirmée' &&
+                            oldOrd.Order_StatutCommande__c != 'Confirmée';
+
+            if (passeEnConfirme) {
                 TransporterService.assignBestTransporter(ord);
             }
         }

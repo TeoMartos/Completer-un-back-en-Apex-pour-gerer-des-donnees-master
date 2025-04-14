@@ -8,14 +8,14 @@ import {
     wire,
     track
 } from 'lwc';
-import getLivraison from '@salesforce/apex/TarifController.getLivraisonById';
-import getAccount from '@salesforce/apex/AccountSelector.getAccountById';
-import getTarifs from '@salesforce/apex/TarifSelector.getTarifsByZoneName';
-import updateTarif from '@salesforce/apex/TarifController.updateTarifOnLivraison';
+import getAccount from '@salesforce/apex/AccountController.getAccountById';
+import getLivraison from '@salesforce/apex/LivraisonController.getLivraisonById';
+import updateTarif from '@salesforce/apex/LivraisonController.updateTarifOnLivraison';
+import getTarifs from '@salesforce/apex/TarifController.getTarifsByZoneName';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class TarifSelector extends LightningElement {
-    @api recordId; // ID de la livraison
+    @api recordId;
     @track tarifs = [];
     @track selectedTarifId;
     @track error;
@@ -71,11 +71,19 @@ export default class TarifSelector extends LightningElement {
 
     @wire(getLivraison, { livraisonId: '$recordId' })
     wiredLivraison({ data, error }) {
-        console.log('[TarifSelector] 🔄 wire getLivraison - recordId utilisé :', this.recordId);
+        console.log('[TarifSelector] 🔄 wire getLivraison déclenché avec recordId :', this.recordId);
+
         if (data) {
-            console.log('[TarifSelector] ✅ Livraison récupérée :', JSON.stringify(data));
+            console.log('[TarifSelector] ✅ Livraison reçue :', JSON.stringify(data));
+
             const orderId = data.Commande__c;
-            const accountId = data.Commande__r.AccountId;
+            const accountId = data.Commande__r?.AccountId;
+
+            if (!orderId || !accountId) {
+                console.error('[TarifSelector] ❌ Problème : Commande__c ou AccountId manquant dans la livraison.');
+                return;
+            }
+
             console.log('[TarifSelector] 📦 Commande ID:', orderId, '| Compte ID:', accountId);
 
             getAccount({ accountId: accountId })
@@ -89,26 +97,35 @@ export default class TarifSelector extends LightningElement {
                 })
                 .then(result => {
                     console.log('[TarifSelector] 📦 Résultat getTarifs:', JSON.stringify(result));
+
+                    if (!Array.isArray(result)) {
+                        console.error('[TarifSelector] ❌ Résultat getTarifs invalide :', result);
+                        this.error = 'Résultat des tarifs non valide.';
+                        return;
+                    }
+
                     this.hasTarif = result.length > 0;
                     this.tarifs = result.map(item => ({
                         id: item.Id,
                         tarif: item.Tarif__c,
-                        transporteurName: item.Transporteur__r.Name,
-                        zoneName: item.Zone_de_Livraison__r.Name,
+                        transporteurName: item.Transporteur__r?.Name ?? '',
+                        zoneName: item.Zone_de_Livraison__r?.Name ?? '',
                         delaiLivraison: item.Delai_Livraison__c
                     }));
                     this.error = null;
                 })
+
                 .catch(error => {
-                    console.error('[TarifSelector] ❌ Erreur lors du traitement :', error);
+                    console.error('[TarifSelector] ❌ Erreur lors du traitement getAccount/getTarifs :', JSON.stringify(error));
                     this.error = 'Erreur lors du traitement des données.';
                 });
 
         } else if (error) {
-            console.error('[TarifSelector] ❌ Erreur lors de la récupération de la livraison :', JSON.stringify(error));
+            console.error('[TarifSelector] ❌ Erreur wire getLivraison :', JSON.stringify(error));
             this.error = 'Impossible de charger la livraison.';
         }
     }
+
 
 handleRowAction(event) {
     const action = event.detail.action;
@@ -127,7 +144,6 @@ handleRowAction(event) {
                         variant: 'success'
                     })
                 );
-                // Optionnel : refresh de la page
                 setTimeout(() => {
                     location.reload();
                 }, 1000);
