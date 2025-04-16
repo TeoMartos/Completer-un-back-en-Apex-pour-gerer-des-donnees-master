@@ -1,6 +1,6 @@
 trigger OrderTrigger on Order (before insert, before update, after update) {
 
-    if (Trigger.isBefore && Trigger.isInsert) {
+    if (Trigger.isBefore && Trigger.isUpdate) {
         for (Order ord : Trigger.new) {
             if (ord.Order_StatutCommande__c == 'Confirmée') {
                 OrderService.validateOrder(ord);

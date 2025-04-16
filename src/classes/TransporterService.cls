@@ -5,13 +5,11 @@
 public with sharing class TransporterService {
     @AuraEnabled(Cacheable=true)
     public static void assignBestTransporter(Order orderToValidate) {
-        // Éviter les doublons
         List<Livraison__c> livraisonsExistantes = [
                 SELECT Id FROM Livraison__c WHERE Commande__c = :orderToValidate.Id LIMIT 1
         ];
 
         if (!livraisonsExistantes.isEmpty()) {
-            System.debug('❌ Livraison déjà existante pour cette commande. Pas de nouvelle création.');
             return;
         }
 
@@ -19,7 +17,6 @@ public with sharing class TransporterService {
         List<Tarif__c> tarifs = TarifSelector.getTarifsByZoneName(acc.ShippingCountry, acc.Acc_TypeClient__c);
 
         if (tarifs == null || tarifs.isEmpty()) {
-            System.debug('Aucun tarif trouvé pour ce compte.');
             return;
         }
 
@@ -30,8 +27,6 @@ public with sharing class TransporterService {
                 Tarif__c = meilleurTarif.Id,
                 Statut__c = 'En cours'
         );
-
-        System.debug('🧪 assignBestTransporter lancé pour Order: ' + orderToValidate.Id);
         insert livraison;
     }
 }

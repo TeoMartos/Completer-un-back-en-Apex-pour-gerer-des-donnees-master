@@ -25,16 +25,11 @@ public with sharing class OrderSelector {
                 WHERE OrderId = :orderId
         ];
 
-        System.debug('OrderItems trouvés : ' + items.size());
-
         Integer totalQuantite = 0;
         for (OrderItem item : items) {
-            System.debug('🔹 Produit : ' + item.Product2.Name + ' | Quantité : ' + item.Quantity);
             if (item.Quantity != null) {
                 totalQuantite += Integer.valueOf(item.Quantity);
             }
         }
-
-        System.debug('Quantité totale de produits commandés : ' + totalQuantite);
     }
 }

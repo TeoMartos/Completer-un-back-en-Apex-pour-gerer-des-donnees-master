@@ -65,10 +65,6 @@ export default class TarifSelector extends LightningElement {
         }
     ];
 
-    connectedCallback() {
-        console.log('[TarifSelector] ✅ connectedCallback - recordId (Livraison) :', this.recordId);
-    }
-
     @wire(getLivraison, { livraisonId: '$recordId' })
     wiredLivraison({ data, error }) {
         if (data) {
