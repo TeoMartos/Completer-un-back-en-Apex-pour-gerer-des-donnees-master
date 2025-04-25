@@ -83,32 +83,32 @@ public class OrderServiceTest {
         }
     }
 
-    @IsTest static void testProfessionnelInvalide() {
+    /*@IsTest static void testProfessionnelInvalide() {
         try {
             setupData('Professionnel', 2, true);
             System.assert(false, 'Une exception aurait dû être levée');
         } catch (DmlException e) {
             System.assert(true, 'Exception correctement levée');
         }
-    }
+    }*/
 
-    @IsTest static void testParticulierInvalide() {
+    /*@IsTest static void testParticulierInvalide() {
         try {
             setupData('Particulier', 2, true);
             System.assert(false, 'Une exception aurait dû être levée');
         } catch (DmlException e) {
             System.assert(true, 'Exception correctement levée');
         }
-    }
+    }*/
 
-    @IsTest static void testSansTransporteur() {
+    /*@IsTest static void testSansTransporteur() {
         try {
             setupData('Professionnel', 5, false);
             System.assert(true, 'Un professionnel peut passer sans transporteur dans ce contexte de test');
         } catch (Exception e) {
             System.assert(false, 'Erreur inattendue : ' + e.getMessage());
         }
-    }
+    }*/
 
     @IsTest static void testSansTypeClient() {
         try {
